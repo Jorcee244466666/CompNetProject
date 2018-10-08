@@ -14,11 +14,8 @@ namespace ChatClient
         [STAThread]
         static void Main()
         {
-            Class1 test = new Class1();
-            test.Main();
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Server server = new Server(1234);
+            server.Run();
         }
     }
 }
