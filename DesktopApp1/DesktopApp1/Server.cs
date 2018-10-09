@@ -18,7 +18,7 @@ namespace ChatClient
         //Private Instance Variables
         private IPAddress hostAddress;
         private TcpListener serverSocket;
-        private LinkedList<TcpClient> clientSockets = new LinkedList<TcpClient>();
+        private static LinkedList<TcpClient> clientSockets = new LinkedList<TcpClient>();
         private int numClients;
 
         /*
@@ -28,7 +28,7 @@ namespace ChatClient
         {
             hostAddress = IPAddress.Loopback;
             serverSocket = new TcpListener(hostAddress, portNum);
-            Connect();
+            serverSocket.Start();
         }
 
         /*
@@ -39,7 +39,7 @@ namespace ChatClient
         {
             hostAddress = IPAddress.Parse(address);
             serverSocket = new TcpListener(hostAddress, portNum);
-            Connect();
+            serverSocket.Start();
         }
         public Server() : this(8888)
         {
@@ -75,9 +75,9 @@ namespace ChatClient
             {
                 Connect();
                 Console.WriteLine(" >> " + "Client No:" + Convert.ToString(numClients) + " started!");
-                Broadcast(PrepareMsg(Convert.ToString(numClients), "", false));
                 clients.AddLast(new ClientHandler());
                 clients.Last().StartClient(clientSockets.Last(), numClients);
+                Broadcast(PrepareMsg(Convert.ToString(numClients), "", false));
             }
             foreach (TcpClient i in clientSockets)
             {

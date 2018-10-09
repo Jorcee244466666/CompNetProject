@@ -40,7 +40,7 @@ namespace ChatClient
                 try
                 {
                     NetworkStream clientStream = clientSocket.GetStream();
-                    clientStream.Read(clientBytes, 0, (int)clientSocket.ReceiveBufferSize);
+                    clientStream.Read(clientBytes, 0, clientBytes.Length);
                     clientMsg = Encoding.ASCII.GetString(clientBytes);
                     clientMsg = clientMsg.Substring(0, clientMsg.IndexOf("#"));
                     Console.WriteLine("Received from Client: " + clientMsg);
