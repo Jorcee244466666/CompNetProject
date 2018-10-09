@@ -21,16 +21,37 @@ namespace ChatClient
          * inClientSocket the Client Connected Socket
          * cNum the assigned number of the client
          * */
-        public void startClient(TcpClient inClientSocket, int cNum)
+        public void StartClient(TcpClient inClientSocket, int cNum)
         {
             this.clientSocket = inClientSocket;
             this.clientNum = cNum;
-            Thread clientThread = new Thread(doChat);
+            Thread clientThread = new Thread(DoChat);
             clientThread.Start();
         }
 
-        private void doChat()
+        private void DoChat()
         {
+            Byte[] clientBytes = new byte[10000];
+            Byte[] sendBytes;
+            String clientMsg;
+            
+            while(true)
+            {
+                try
+                {
+                    NetworkStream clientStream = clientSocket.GetStream();
+                    clientStream.Read(clientBytes, 0, (int)clientSocket.ReceiveBufferSize);
+                    clientMsg = Encoding.ASCII.GetString(clientBytes);
+                    clientMsg = clientMsg.Substring(0, clientMsg.IndexOf("#"));
+                    Console.WriteLine("Received from Client: " + clientMsg);
+                    sendBytes = Server.PrepareMsg(Convert.ToString(clientNum), clientMsg, true);
+                    Server.Broadcast(sendBytes);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
         }
     }
 }

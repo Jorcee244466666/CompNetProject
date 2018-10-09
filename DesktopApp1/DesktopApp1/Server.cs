@@ -18,7 +18,7 @@ namespace ChatClient
         //Private Instance Variables
         private IPAddress hostAddress;
         private TcpListener serverSocket;
-        private TcpClient clientSocket;
+        private LinkedList<TcpClient> clientSockets = new LinkedList<TcpClient>();
         private int numClients;
 
         /*
@@ -54,12 +54,13 @@ namespace ChatClient
         public bool Connect()
         {
             try {
-                clientSocket = serverSocket.AcceptTcpClient();
+                clientSockets.AddLast(serverSocket.AcceptTcpClient());
             } catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
                 return false;
             }
+            numClients++;
             return true;
         }
 
@@ -68,19 +69,56 @@ namespace ChatClient
          * */
         public void Run()
         {
+            LinkedList<ClientHandler> clients = new LinkedList<ClientHandler>();
             numClients = 0;
-            while (true)
+            while (numClients >= 0)
             {
-                numClients += 1;
-                clientSocket = serverSocket.AcceptTcpClient();
+                Connect();
                 Console.WriteLine(" >> " + "Client No:" + Convert.ToString(numClients) + " started!");
-                ClientHandler client = new ClientHandler();
-                client.startClient(clientSocket, numClients);
+                Broadcast(PrepareMsg(Convert.ToString(numClients), "", false));
+                clients.AddLast(new ClientHandler());
+                clients.Last().StartClient(clientSockets.Last(), numClients);
             }
-            clientSocket.Close();
+            foreach (TcpClient i in clientSockets)
+            {
+                i.Close();
+            }
             serverSocket.Stop();
             Console.WriteLine(" >> " + "exit");
             Console.ReadLine();
+        }
+        /*
+         * Broadcast received messages to all clients
+         * */
+        public static void Broadcast(Byte[] msg)
+        {
+            NetworkStream bStream;
+            foreach (TcpClient client in clientSockets)
+            {
+                bStream = client.GetStream();
+                bStream.Write(msg, 0, msg.Length);
+                bStream.Flush();
+            }
+
+        }
+        /*
+         * Prepare a message to be sent on a Network Stream
+         * user the name of the user who is sending the message
+         * msg the message the user wants to send
+         * isMsg whether the message is a message (alternative being join notification
+         * */
+        public static Byte[] PrepareMsg(String user, String msg, bool isMsg)
+        {
+            Byte[] bBytes = null;
+            if (isMsg)
+            {
+                bBytes = Encoding.ASCII.GetBytes(user + ": " + msg + "\n");
+            }
+            else
+            {
+                bBytes = Encoding.ASCII.GetBytes(user + " joined the chat\n");
+            }
+            return (bBytes);
         }
     }
 }
