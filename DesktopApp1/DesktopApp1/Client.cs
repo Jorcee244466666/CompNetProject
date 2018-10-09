@@ -25,11 +25,13 @@ namespace ChatClient
                 serverStream = mySocket.GetStream();
                 serverStream.Read(receiveStream, 0, receiveStream.Length);
                 receivedMsg = Encoding.ASCII.GetString(receiveStream);
-                if (receivedMsg.Length > 1)
+                receivedMsg = receivedMsg.Substring(0, receivedMsg.IndexOf("\n"));
+                if (receivedMsg.Contains("#"))
                 {
                     Console.WriteLine("#" + receivedMsg);
                     receivedMsg = "";
                 }
+                receivedMsg = "";
 
             }
         }
@@ -39,9 +41,12 @@ namespace ChatClient
             Byte[] msgBytes;
             while (true)
             {
-                msgBytes = Encoding.ASCII.GetBytes(Console.ReadLine());
-                serverStream.Write(msgBytes, 0, msgBytes.Length);
-                serverStream.Flush();
+                if (Console.KeyAvailable)
+                {
+                    msgBytes = Encoding.ASCII.GetBytes(Console.ReadLine());
+                    serverStream.Write(msgBytes, 0, msgBytes.Length);
+                    serverStream.Flush();
+                }
             }
         }
 
@@ -55,6 +60,7 @@ namespace ChatClient
             Thread receiveThread = new Thread(ReceiveMsg);
             Thread sendThread = new Thread(SendMsg);
             receiveThread.Start();
+            receiveThread.IsBackground = true;
             sendThread.Start();
         }
     }
