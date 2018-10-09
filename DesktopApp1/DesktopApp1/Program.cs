@@ -19,7 +19,11 @@ namespace ChatClient
             choice = choice.ToLower();
             if (choice.Equals("server"))
             {
-                Server server = new Server(1234);
+                Console.WriteLine("Please enter the IP to Start the Server on");
+                String address = Console.ReadLine();
+                Console.WriteLine("Please Enter the Port to start the server on");
+                int portNum = int.Parse(Console.ReadLine());
+                Server server = new Server(address, portNum);
                 server.Run();
             } else if (choice.Equals("client"))
             {

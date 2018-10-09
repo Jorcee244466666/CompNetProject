@@ -53,7 +53,7 @@ namespace ChatClient
         public void Start()
         {
             Console.WriteLine("Please Enter Server IP: ");
-            serverAddress = IPAddress.Loopback;
+            serverAddress = IPAddress.Parse(Console.ReadLine());
             Console.WriteLine("Please Enter the Port Number to use: ");
             portNum = int.Parse(Console.ReadLine());
             mySocket.Connect(serverAddress, portNum);
