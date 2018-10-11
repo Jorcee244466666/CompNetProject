@@ -61,6 +61,7 @@ namespace ChatClient
                 return false;
             }
             numClients++;
+            Broadcast(PrepareMsg("Server", "Client " + numClients + " joined", true));
             return true;
         }
 

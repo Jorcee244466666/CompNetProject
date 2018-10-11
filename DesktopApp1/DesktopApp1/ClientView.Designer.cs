@@ -96,6 +96,7 @@ namespace ChatClient
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "ClientView";
             this.Text = "ClientView";
             this.Load += new System.EventHandler(this.ClientView_Load);

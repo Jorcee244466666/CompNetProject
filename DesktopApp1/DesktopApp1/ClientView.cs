@@ -112,6 +112,7 @@ namespace ChatClient
                 connected = true;
                 button2.Enabled = false;
                 label1.Text = "Connected to " + serverAddress;
+                textBox2.Text = "";
                 Thread receiveThread = new Thread(ReceiveMsg);
                 receiveThread.IsBackground = true;
                 receiveThread.Start();
