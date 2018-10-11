@@ -27,8 +27,8 @@ namespace ChatClient
                 server.Run();
             } else if (choice.Equals("client"))
             {
-                Client client = new Client();
-                client.Start();
+                ClientView client = new ClientView();
+                client.ShowDialog();
             } else
             {
                 throw new Exception("Invalid Input");
